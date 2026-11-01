@@ -44,7 +44,7 @@ KNOWN_LORAS = [
     "thesealpacas-nsfw-v2.safetensors",
     "nsfw-posture-v3.safetensors",
     "qwen21-nsfw-image-edit.safetensors",
-    "VNCCS_QI2_PoseStudioV1.1.safetensors",
+    os.environ.get("VNCCS_LORA", "VNCCS_QI2_PoseStudioV1.1.safetensors"),
 ]
 PACKAGE_FILES = [
     "workflows/qwen21_t2i.json",
@@ -262,6 +262,9 @@ def run(json_out: bool) -> int:
 
 
 def main() -> int:
+    # Windows cp1252 consoles cannot print the ①②③④ glyphs used in check text.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(description="Read-only environment self-check (never writes anything)")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     a = ap.parse_args()

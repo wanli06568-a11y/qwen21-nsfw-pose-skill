@@ -48,7 +48,7 @@ VNCCS_LIB = Path(os.environ.get("VNCCS_POSELIB", str(_COMFY / "custom_nodes" / "
 COMFY_INPUT = Path(os.environ.get("COMFYUI_INPUT", str(_COMFY / "input")))
 COMFY_OUTPUT = Path(os.environ.get("COMFYUI_OUTPUT", str(_COMFY / "output")))
 OUT = Path(os.environ.get("VNCCS_UI_OUT", str(_PKG_DIR / "outputs" / "vnccs_ui")))
-VNCCS_LORA = "VNCCS_QI2_PoseStudioV1.1.safetensors"
+VNCCS_LORA = os.environ.get("VNCCS_LORA", "VNCCS_QI2_PoseStudioV1.1.safetensors")
 URL = os.environ.get("COMFYUI_URL", "http://127.0.0.1:8188")
 
 # aliases used by the phase4b runs, kept so old commands still work
@@ -75,7 +75,7 @@ def build_pose_index() -> dict[str, Path]:
     counts: dict[str, int] = {}
     if VNCCS_LIB.is_dir():
         for p in sorted(VNCCS_LIB.rglob("*.json")):
-            s = str(p)
+            s = p.as_posix()  # Windows str(path) uses backslashes; normalize
             if "/poses/" not in s and "/local_user_poses/" not in s:
                 continue
             rel = p.relative_to(VNCCS_LIB).parts
@@ -176,6 +176,11 @@ def settle(page, ms: int) -> None:
 
 
 def main() -> int:
+    # Windows cp1252 consoles cannot print the route glyphs or non-ASCII pose
+    # names; reconfigure both streams (stdout carries the list, stderr the notes).
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser()
     ap.add_argument("--pose", default="crawling",
                     help="pose name/slug from the PoseLibrary (see --list-poses)")

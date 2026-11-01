@@ -3,7 +3,7 @@
 本包自带脚本、工作流、提示词、案例图与 55 个精选姿势；ComfyUI 侧还需要
 **3 个底模文件**。LoRA、VNCCS 节点和姿势库按你要用的路线选择安装，不必一次全下。
 
-本指南按 Linux 环境编写（脚本使用 POSIX `fcntl` 文件锁）；Python 需 3.10 或更新版本。硬件需求（显存/内存/硬盘）参考见 README 的「硬件要求」小节。
+本指南按 Linux 环境编写（脚本使用 POSIX `fcntl` 文件锁）；Python 需 3.10 或更新版本。硬件需求（显存/内存/硬盘）参考见 README 的「硬件要求」小节；macOS（Apple Silicon）用户另见 README 的「macOS（Apple Silicon）」小节。
 
 ## 0. 获取仓库并设置路径
 
@@ -173,7 +173,9 @@ python3 scripts/run_vnccs_ui.py --pose "squatting leaning back" \
 环境变量（脚本内置默认值，按需覆盖）：
 `COMFYUI_URL`、`COMFYUI_INPUT`、`COMFYUI_OUTPUT`、`POSELAB`（本包根）、
 `QWEN_POSE_WORKFLOWS`（Qwen 工作流目录）、`VNCCS_WF_FILE`（VNCCS 工作流文件）、
-`VNCCS_POSELIB`（VNCCS 节点自带 PoseLibrary 目录）、`VNCCS_UI_OUT`（输出目录）。
+`VNCCS_POSELIB`（VNCCS 节点自带 PoseLibrary 目录）、`VNCCS_UI_OUT`（输出目录）、
+`VNCCS_LORA`（路线③④用的 VNCCS PoseStudio LoRA 文件名，默认 `VNCCS_QI2_PoseStudioV1.1.safetensors`；
+换 V2 时设成 `VNCCS_QI2_PoseStudioV2.safetensors`，路线③的 `--lora` 优先于它）。
 其中 `COMFYUI_INPUT` / `COMFYUI_OUTPUT` / `VNCCS_POSELIB` 默认从 `$COMFY` 推导；
 未设 `$COMFY` 时用 `~/ComfyUI`。
 
